@@ -24,7 +24,6 @@ object Settlers {
                 println("Loaded Settler $uuid with $$cash")
             }
         }
-        Database.disconnect()
     }
 
     private fun registerSettler(uuid: UUID, cash: Double = 0.0) {

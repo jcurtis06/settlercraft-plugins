@@ -17,8 +17,23 @@ object Database {
     private val isConnected: Boolean
         get() = !connection.isClosed
 
+    var lastExecution: Long = 0
+
+    init {
+        SettlerCore.instance!!.server.scheduler.runTaskTimerAsynchronously(SettlerCore.instance!!, Runnable {
+            println("Checking if connection is still alive...")
+            lastExecution += 1200
+            println("Last execution was $lastExecution ms ago")
+            if (lastExecution >= 6000) {
+                disconnect()
+                println("Disconnected from database due to inactivity")
+            }
+        }, 0, 1200)
+    }
+
     fun connect() {
         if (!isConnected) {
+            lastExecution = 0
             try {
                 connection = DriverManager.getConnection("jdbc:mysql://$host:$port/$database?useSSL=false", username, password)
             } catch (e: SQLException) {
@@ -38,45 +53,49 @@ object Database {
     }
 
     fun getColWhere(table: String, col: String, where: String, whereVal: Any): Any? {
+        lastExecution = 0
         connect()
+
         try {
             val statement = connection.createStatement()
             val result = statement.executeQuery("SELECT $col FROM $table WHERE $where = '$whereVal'")
             if (result.next()) {
-                disconnect()
                 return result.getObject(col)
             }
         } catch (e: SQLException) {
             e.printStackTrace()
         }
-        disconnect()
         return null
     }
 
     fun setColWhere(table: String, col: String, where: String, whereVal: Any, newVal: Any) {
+        lastExecution = 0
         connect()
+
         try {
             val statement = connection.createStatement()
             statement.executeUpdate("UPDATE $table SET $col = $newVal WHERE $where = '$whereVal'")
         } catch (e: SQLException) {
             e.printStackTrace()
         }
-        disconnect()
     }
 
     fun insert(table: String, col: String, value: Any) {
+        lastExecution = 0
         connect()
+
         try {
             val statement = connection.createStatement()
             statement.executeUpdate("INSERT INTO $table ($col) VALUES ('$value')")
         } catch (e: SQLException) {
             e.printStackTrace()
         }
-        disconnect()
     }
 
     fun doesExist(table: String, col: String, value: Any): Boolean {
+        lastExecution = 0
         connect()
+
         try {
             val statement = connection.createStatement()
             println("SELECT * FROM $table WHERE $col = $value")
@@ -88,7 +107,6 @@ object Database {
         } catch (e: SQLException) {
             e.printStackTrace()
         }
-        disconnect()
         return false
     }
 }

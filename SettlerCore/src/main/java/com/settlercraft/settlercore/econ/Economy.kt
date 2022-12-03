@@ -2,8 +2,6 @@ package com.settlercraft.settlercore.econ
 
 import com.settlercraft.settlercore.data.Database
 import com.settlercraft.settlercore.settler.Settlers
-import org.bukkit.Material
-import org.bukkit.OfflinePlayer
 import java.util.UUID
 
 /**
@@ -18,7 +16,9 @@ object Economy {
     fun setBalance(uuid: UUID, amount: Double): EconomyError {
         if (Settlers.getSettler(uuid) == null) return EconomyError.SETTLER_NOT_FOUND
         Settlers.getSettler(uuid)!!.wallet.cash = amount
+        println("Setting balance of $uuid to $amount...")
         Database.setColWhere("settlers", "cash", "uuid", uuid, amount)
+        println("Set $uuid's balance to $amount")
         return EconomyError.SUCCESS
     }
 
@@ -43,10 +43,4 @@ object Economy {
         deposit(to, amount)
         return EconomyError.SUCCESS
     }
-}
-
-enum class EconomyError {
-    SETTLER_NOT_FOUND,
-    INSUFFICIENT_FUNDS,
-    SUCCESS
 }
