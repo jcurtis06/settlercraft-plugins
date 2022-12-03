@@ -1,0 +1,17 @@
+name: Settlercore
+version: '${version}'
+main: com.settlercraft.settlercore.SettlerCore
+api-version: 1.19
+prefix: SETTLERCORE
+authors: [ jcurtis06 ]
+description: The core plugin for Settlercraft
+website: https://github.com/jcurtis06/settlercraft-plugins
+libraries:
+  - org.jetbrains.kotlin:kotlin-stdlib:1.7.22
+commands:
+    settlercore:
+        description: The core plugin for Settlercraft
+        usage: /settlercore
+        aliases: [ sc ]
+        permission: settlercore.command.settlercore
+        permission-message: You do not have permission to use this command
