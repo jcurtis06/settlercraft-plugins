@@ -19,18 +19,37 @@ object Settlers {
         while (rs.next()) {
             val uuid = rs.getString("uuid")
             val cash = rs.getDouble("cash")
+            val name = rs.getString("name")
             if (uuid != null) {
-                registerSettler(UUID.fromString(uuid), cash)
-                println("Loaded Settler $uuid with $$cash")
+                registerSettler(UUID.fromString(uuid), name, cash)
+                println("Loaded Settler ${name} with $$cash (${uuid})")
             }
         }
     }
 
-    private fun registerSettler(uuid: UUID, cash: Double = 0.0) {
-        if (getSettler(uuid) != null) return
+    /**
+     * Reloads the settlers from the database
+     */
+    fun reloadSettler(name: String) {
+        Database.connect()
+        val con = Database.connection
 
-        val settler = Settler(uuid)
-        settler.wallet.cash = cash
-        settlers.add(settler)
+        val stmt = con.createStatement()
+        val rs = stmt.executeQuery("SELECT * FROM settlers WHERE name = '$name'")
+        while (rs.next()) {
+            val uuid = rs.getString("uuid")
+            val cash = rs.getDouble("cash")
+            val name = rs.getString("name")
+            if (uuid != null) {
+                getSettler(UUID.fromString(uuid))!!.money = cash
+
+                println("Reloaded Settler ${name} with $$cash (${uuid})")
+            }
+        }
+    }
+
+    private fun registerSettler(uuid: UUID, name: String, cash: Double = 0.0) {
+        if (getSettler(uuid) != null) return
+        settlers.add(Settler(uuid, name, cash))
     }
 }

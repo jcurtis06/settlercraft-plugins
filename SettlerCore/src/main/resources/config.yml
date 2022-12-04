@@ -4,3 +4,6 @@ mysql:
   database: "settlercraft"
   username: "root"
   password: "password"
+rest:
+  key: "password"
+  port: 8080

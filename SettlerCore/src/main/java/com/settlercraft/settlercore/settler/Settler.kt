@@ -1,8 +1,5 @@
 package com.settlercraft.settlercore.settler
 
-import com.settlercraft.settlercore.econ.Wallet
 import java.util.UUID
 
-class Settler(val uuid: UUID) {
-    val wallet = Wallet(this)
-}
+data class Settler(val uuid: UUID, var name: String, var money: Double = 0.0)
