@@ -1,7 +1,0 @@
-# SQL login data
-mysql:
-  host: localhost
-  port: 3306
-  name: database
-  user: username
-  password: password

@@ -12,8 +12,3 @@ commands:
     settlercore:
         description: The core plugin for Settlercraft
         usage: /settlercore
-        aliases: [ sc ]
-        permission: settlercore.command.settlercore
-        permission-message: You do not have permission to use this command
-    pay:
-      description: Pay someone
