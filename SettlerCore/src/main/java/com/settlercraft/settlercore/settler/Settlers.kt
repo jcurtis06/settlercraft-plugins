@@ -5,15 +5,34 @@ import java.util.*
 
 object Settlers {
     private val settlers: MutableList<Settler> = mutableListOf()
+    private val blankUUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
 
+    /**
+     * Gets a settler by their UUID
+     * @param uuid The UUID of the settler
+     * @return The settler, or null if not found
+     * @see Settler
+     * @see settlerUUID
+     */
     fun getSettler(uuid: UUID): Settler? {
         return settlers.find { it.uuid == uuid }
     }
 
-    fun getSettler(name: String): Settler? {
-        return settlers.find { it.name == name }
+    /**
+     * Gets a settler's UUID by their name
+     * @param name The name of the settler
+     * @return The UUID of the settler, or an empty UUID if not found
+     * @see Settler
+     */
+    fun settlerUUID(name: String): UUID {
+        return settlers.find { it.name == name }?.uuid ?: blankUUID
     }
 
+    /**
+     * Loads all settlers from the database
+     * @see Settler
+     * @see Database
+     */
     fun loadSettlers() {
         Database.connect()
         val con = Database.connection
@@ -32,7 +51,9 @@ object Settlers {
     }
 
     /**
-     * Reloads the settlers from the database
+     * Reads a settler from the database
+     * @see Settler
+     * @see Database
      */
     fun reloadSettler(name: String) {
         Database.connect()
@@ -52,6 +73,14 @@ object Settlers {
         }
     }
 
+    /**
+     * Registers a settler locally.
+     * This does not save the settler to the database.
+     * @param uuid The UUID of the settler
+     * @param name The name of the settler
+     * @param cash The cash of the settler
+     * @see Settler
+     */
     private fun registerSettler(uuid: UUID, name: String, cash: Double = 0.0) {
         if (getSettler(uuid) != null) return
         settlers.add(Settler(uuid, name, cash))

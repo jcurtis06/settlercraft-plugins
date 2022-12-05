@@ -8,6 +8,7 @@ import java.util.UUID
 /**
  * Manages the economy of the server
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object Economy {
     /**
      * Gets the balance of a player
