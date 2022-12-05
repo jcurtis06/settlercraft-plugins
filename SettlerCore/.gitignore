@@ -2,6 +2,7 @@
 .idea/
 
 gradle.properties
+./gradle.properties
 
 *.iml
 *.ipr
