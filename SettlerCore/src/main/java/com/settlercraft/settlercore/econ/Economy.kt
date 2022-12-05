@@ -2,6 +2,7 @@ package com.settlercraft.settlercore.econ
 
 import com.settlercraft.settlercore.data.Database
 import com.settlercraft.settlercore.settler.Settlers
+import com.settlercraft.settlercore.utils.Two
 import java.util.UUID
 
 /**
@@ -14,9 +15,9 @@ object Economy {
      * @return A pair, first is balance, second is EconomyError
      * @see EconomyError
      */
-    fun getBalance(uuid: UUID): Pair<Double?, EconomyError> {
-        if (Settlers.getSettler(uuid) == null) return Pair(null, EconomyError.SETTLER_NOT_FOUND)
-        return Pair(Settlers.getSettler(uuid)!!.money, EconomyError.SUCCESS)
+    fun getBalance(uuid: UUID): Two<Double?, EconomyError> {
+        if (Settlers.getSettler(uuid) == null) return Two(null, EconomyError.SETTLER_NOT_FOUND)
+        return Two(Settlers.getSettler(uuid)!!.money, EconomyError.SUCCESS)
     }
 
     /**

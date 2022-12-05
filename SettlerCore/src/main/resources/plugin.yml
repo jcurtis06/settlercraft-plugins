@@ -7,7 +7,7 @@ authors: [ jcurtis06 ]
 description: The core plugin for Settlercraft
 website: https://github.com/jcurtis06/settlercraft-plugins
 libraries:
-  - org.jetbrains.kotlin:kotlin-stdlib:1.7.22
+  - org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.22
 commands:
     settlercore:
         description: The core plugin for Settlercraft

@@ -10,6 +10,10 @@ object Settlers {
         return settlers.find { it.uuid == uuid }
     }
 
+    fun getSettler(name: String): Settler? {
+        return settlers.find { it.name == name }
+    }
+
     fun loadSettlers() {
         Database.connect()
         val con = Database.connection
@@ -39,11 +43,11 @@ object Settlers {
         while (rs.next()) {
             val uuid = rs.getString("uuid")
             val cash = rs.getDouble("cash")
-            val name = rs.getString("name")
+            val resName = rs.getString("name")
             if (uuid != null) {
                 getSettler(UUID.fromString(uuid))!!.money = cash
 
-                println("Reloaded Settler ${name} with $$cash (${uuid})")
+                println("Reloaded Settler ${resName} with $$cash (${uuid})")
             }
         }
     }
