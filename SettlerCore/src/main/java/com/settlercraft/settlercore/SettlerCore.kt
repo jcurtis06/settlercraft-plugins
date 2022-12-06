@@ -11,17 +11,12 @@ class SettlerCore : JavaPlugin() {
     }
 
     override fun onEnable() {
-        println("SQL Information:")
-        println("Host: ${config.getString("mysql.host")}")
-        println("Port: ${config.getString("mysql.port")}")
-        println("Database: ${config.getString("mysql.database")}")
-        println("User: ${config.getString("mysql.user")}")
-        println("Password: ${config.getString("mysql.password")}")
         instance = this
         saveDefaultConfig()
         server.pluginManager.registerEvents(SettlerListeners(), this)
 
         Settlers.loadSettlers()
+        Settlers.startMsgLoop()
 
         API.start()
     }

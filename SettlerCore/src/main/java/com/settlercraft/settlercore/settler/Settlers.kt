@@ -1,8 +1,11 @@
 package com.settlercraft.settlercore.settler
 
+import com.settlercraft.settlercore.SettlerCore
 import com.settlercraft.settlercore.data.Database
+import org.bukkit.scheduler.BukkitRunnable
 import java.util.*
 
+@Suppress("MemberVisibilityCanBePrivate")
 object Settlers {
     private val settlers: MutableList<Settler> = mutableListOf()
     private val blankUUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
@@ -45,9 +48,27 @@ object Settlers {
             val name = rs.getString("name")
             if (uuid != null) {
                 registerSettler(UUID.fromString(uuid), name, cash)
-                println("Loaded Settler ${name} with $$cash (${uuid})")
+                println("Loaded Settler $name with $$cash (${uuid})")
             }
         }
+    }
+
+    /**
+     * Starts looping through online players and updating their status messages
+     * Do not call this method more than once or else it may cause issues
+     * @see Settler
+     */
+    fun startMsgLoop() {
+        object: BukkitRunnable() {
+            override fun run() {
+                for (player in SettlerCore.instance!!.server.onlinePlayers) {
+                    val settler = getSettler(player.uniqueId)
+                    if (settler != null) {
+                        player.sendActionBar(settler.formatStatusMsg())
+                    }
+                }
+            }
+        }.runTaskTimer(SettlerCore.instance!!, 0, 20)
     }
 
     /**
@@ -68,7 +89,7 @@ object Settlers {
             if (uuid != null) {
                 getSettler(UUID.fromString(uuid))!!.money = cash
 
-                println("Reloaded Settler ${resName} with $$cash (${uuid})")
+                println("Reloaded Settler $resName with $$cash (${uuid})")
             }
         }
     }
