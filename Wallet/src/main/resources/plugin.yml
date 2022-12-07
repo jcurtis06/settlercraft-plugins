@@ -2,13 +2,12 @@ name: Wallet
 version: '${version}'
 main: com.settlercraft.wallet.Wallet
 api-version: 1.19
-prefix: WALLET
-depend: [ Vault ]
+prefix: Wallet
+depend: [ Settlercore ]
 authors: [ jcurtis06 ]
 description: A simple plugin for managing user's money
 website: https://github.com/jcurtis06/settlercraft-plugins
-libraries:
-  - org.jetbrains.kotlin:kotlin-stdlib:1.7.22
 commands:
   pay:
-    description: Pay another player
+    description: Pay someone
+    usage: /pay <player> <amount>

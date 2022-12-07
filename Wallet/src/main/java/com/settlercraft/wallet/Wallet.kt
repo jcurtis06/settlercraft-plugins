@@ -1,39 +1,41 @@
 package com.settlercraft.wallet
 
-import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource
-import com.mysql.cj.jdbc.MysqlDataSource
-import com.settlercraft.wallet.commands.Pay
-import com.settlercraft.wallet.listeners.JoinLeave
-import com.settlercraft.wallet.managers.DataManager
-import com.settlercraft.wallet.managers.PlayerManager
+import com.settlercraft.settlercore.settler.Settlers
+import com.settlercraft.settlercore.settler.actionbar.StatusMessage
+import com.settlercraft.wallet.commands.PayCMD
+import com.settlercraft.wallet.listeners.JoinQuit
 import org.bukkit.plugin.java.JavaPlugin
-
 
 class Wallet : JavaPlugin() {
     companion object {
+        const val prefix = "§7[§aWallet§7] §9"
         var instance: Wallet? = null
     }
 
     override fun onEnable() {
         instance = this
 
-        getCommand("pay")!!.setExecutor(Pay())
-
-        server.pluginManager.registerEvents(JoinLeave(), this)
-
-        saveDefaultConfig()
-
-        DataManager.connect()
-
-        for (player in server.onlinePlayers) {
-            PlayerManager.registerPlayer(player.uniqueId)
+        if (server.pluginManager.isPluginEnabled("Settlercore")) {
+            logger.info("Successfully hooked into SettlerCore!")
+        } else {
+            logger.severe("SettlerCore must be enabled to use this plugin!")
+            server.pluginManager.disablePlugin(this)
+            return
         }
 
+        getCommand("pay")?.setExecutor(PayCMD())
+        server.pluginManager.registerEvents(JoinQuit(), this)
+
         logger.info("Wallet has been enabled!")
+
+        for (player in server.onlinePlayers) {
+            Settlers.getSettler(player.uniqueId)?.let {
+                it.addStatusMsg(StatusMessage("money-${it.name}") { "§a${it.money.toInt()}" })
+            }
+        }
     }
 
     override fun onDisable() {
-        DataManager.disconnect()
         logger.info("Wallet has been disabled!")
     }
 }

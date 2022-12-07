@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'com.settlercraft'
-version = '0.0.1-BETA'
+version = '0.0.3-BETA'
 
 repositories {
     mavenCentral()
@@ -16,14 +16,21 @@ repositories {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
-    maven { url 'https://jitpack.io' }
+    repositories {
+        maven {
+            url = uri("https://maven.pkg.github.com/jcurtis06/settlercraft-plugins")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
+            }
+        }
+    }
 }
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
-    compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-    implementation group: 'com.mysql', name: 'mysql-connector-j', version: '8.0.31'
+    compileOnly 'com.settlercraft:settler-core:0.0.9-BETA'
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.7.22"
 }
 
 def targetJavaVersion = 17
@@ -50,13 +57,13 @@ processResources {
         expand props
     }
 }
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "17"
 }
