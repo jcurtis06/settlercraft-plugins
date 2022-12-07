@@ -1,4 +1,3 @@
 package com.settlercraft.settlercore.settler.actionbar
 
-class StatusMessage {
-}
+class StatusMessage(val id: String, val get: () -> String)

@@ -27,8 +27,8 @@ object Settlers {
      * @return The UUID of the settler, or an empty UUID if not found
      * @see Settler
      */
-    fun settlerUUID(name: String): UUID {
-        return settlers.find { it.name == name }?.uuid ?: blankUUID
+    fun settlerUUID(name: String): UUID? {
+        return settlers.find { it.name == name }?.uuid
     }
 
     /**

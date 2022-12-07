@@ -2,10 +2,11 @@ plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.7.22'
     id "maven-publish"
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 group = 'com.settlercraft'
-version = '0.0.2-BETA'
+version = '0.0.9-BETA'
 
 repositories {
     mavenCentral()
@@ -42,6 +43,7 @@ publishing {
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
+    shadow "org.jetbrains.kotlin:kotlin-stdlib:1.7.22"
 }
 
 def targetJavaVersion = 17
@@ -68,13 +70,14 @@ processResources {
         expand props
     }
 }
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
+
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
-compileTestKotlin {
-    kotlinOptions {
-        jvmTarget = "17"
-    }
+
+tasks.build {
+    dependsOn shadowJar
 }
+
