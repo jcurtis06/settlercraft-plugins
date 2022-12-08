@@ -1,10 +1,7 @@
 # settlercraft-plugins
 Custom plugins for SettlerCraft; the most legendary survival server in existence.
 
-# Problems
-1. Claimed chunks stay forever claimed despite being untouched by the owner
-
-# Possible solutions
-1.
-  a. Taxes
-  b. Moving through adjacent territory every given time period
+# Problems/Solutions
+- Claimed chunks stay forever claimed despite being untouched by the owner
+  - Solution A: Taxes
+  - Solution B: Not moving through adjacent territory every given time period results in loss of claim
