@@ -1,0 +1,5 @@
+main: com.settlercraft.shops.Shops
+version: 1.0
+name: Shops
+api-version: 1.19
+prefix: Shops

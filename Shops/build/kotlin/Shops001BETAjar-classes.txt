@@ -1,0 +1,1 @@
+/Users/jonathan/Code/Plugins/settlercraft-plugins/Shops/build/classes/kotlin/main/com/settlercraft/shops/Shops.class

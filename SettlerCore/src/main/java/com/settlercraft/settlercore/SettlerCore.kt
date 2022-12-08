@@ -18,6 +18,10 @@ class SettlerCore : JavaPlugin() {
         Settlers.loadSettlers()
         Settlers.startMsgLoop()
 
+        val pairTest = Pair("Hello", "World")
+        logger.info("${pairTest.first} From SettlerCore")
+        logger.info("${pairTest.second} From SettlerCore")
+
         API.start()
     }
 
