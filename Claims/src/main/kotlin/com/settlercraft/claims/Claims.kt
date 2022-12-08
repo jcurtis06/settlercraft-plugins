@@ -2,7 +2,7 @@ package com.settlercraft.claims
 
 import org.bukkit.plugin.java.JavaPlugin
 
-class KotlinPaper: JavaPlugin() {
+class Claims: JavaPlugin() {
     override fun onEnable() {
         // Pair is part of the Kotlin standard library
         // this is a test to see if it works properly on the server
