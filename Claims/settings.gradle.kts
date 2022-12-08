@@ -1,3 +1,3 @@
 
-rootProject.name = "KotlinPaper"
+rootProject.name = "Claims"
 
