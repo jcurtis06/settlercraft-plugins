@@ -1,0 +1,4 @@
+main: com.settlercraft.claims.KotlinPaper
+version: 1.0
+name: KotlinPaper
+api-version: 1.19
