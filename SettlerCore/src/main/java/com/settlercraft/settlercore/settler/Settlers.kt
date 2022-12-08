@@ -77,8 +77,7 @@ object Settlers {
      * @see Database
      */
     fun reloadSettler(name: String) {
-        Database.connect()
-        val con = Database.connection
+        val con = Database.connect()
 
         val stmt = con.createStatement()
         val rs = stmt.executeQuery("SELECT * FROM settlers WHERE name = '$name'")

@@ -31,7 +31,7 @@ object Database {
         }, 0, 1200)
     }
 
-    fun connect() {
+    fun connect(): Connection {
         if (!isConnected) {
             lastExecution = 0
             try {
@@ -40,6 +40,7 @@ object Database {
                 e.printStackTrace()
             }
         }
+        return connection
     }
 
     fun disconnect() {
