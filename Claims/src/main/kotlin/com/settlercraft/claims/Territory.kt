@@ -1,5 +1,6 @@
 package com.settlercraft.claims
 
+import org.bukkit.util.Vector
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -24,6 +25,13 @@ class Territory(var ownerUuid: UUID) {
             }
         }
         return ClaimError.FAILED_TO_CONNECT
+    }
+
+    fun isInTerritory(point: Vector): Boolean {
+        for (claim in innerClaims)
+            if (claim.isInClaim(point))
+                return true
+        return false
     }
     fun getAuthorityLevel(uuid: UUID): AuthorityLevel {
         if (uuid !in uuidToAuthority)

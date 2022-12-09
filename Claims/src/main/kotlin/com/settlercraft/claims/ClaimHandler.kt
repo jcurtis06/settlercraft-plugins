@@ -8,11 +8,7 @@ import kotlin.math.pow
 
 object ClaimHandler {
     private val claims = mutableListOf<Claim>()
-    private val claimsByUuid = HashMap<UUID,  MutableList<Claim>>()
-    private val claimsByXZ = HashMap<String, Claim>()
     private val territories = mutableListOf<Territory>()
-    private val territoriesByUuid= HashMap<UUID,  MutableList<Territory>>()
-    private val territoriesByXZ = HashMap<String,  Territory>()
     private const val flatPrice: Double = 20.0
     private const val perClaimPrice: Double = 1.5
 
@@ -20,23 +16,28 @@ object ClaimHandler {
     fun getClaimAt(point: Vector): Claim? {
         val x: Int = floor(point.x.div(16)).times(16) as Int
         val z: Int = floor(point.z.div(16)).times(16) as Int
-        return claimsByXZ["$x,$z"]
+        for (claim in claims)
+            if (claim.isInClaim(point))
+                return claim
+        return null
     }
     fun getClaimAt(x: Double, z: Double) = getClaimAt(Vector(x, 0.0 , z))
     fun getTerritoryAt(point: Vector): Territory? {
         val x: Int = floor(point.x.div(16)).times(16) as Int
         val z: Int = floor(point.z.div(16)).times(16) as Int
-        return territoriesByXZ["$x,$z"]
+        for (territory in territories)
+            if (territory.isInTerritory(point))
+                return territory
+        return null
     }
     fun getTerritoryAt(x: Double, z: Double) = getTerritoryAt(Vector(x, 0.0 , z))
 
     private fun tryConnect(claim: Claim) {
         var found = false
-        var ter: Territory? = null
+        var ter: Territory?
         for (territory in territories)
             if (territory.tryConnect(claim) == ClaimError.SUCCESS) {
                 found = true
-                ter = territory
                 break
             }
         if (!found) {
@@ -44,22 +45,12 @@ object ClaimHandler {
             ter.forceAddClaim(claim)
             territories.add(ter)
         }
-        if (claim.ownerUuid !in territoriesByUuid)
-            territoriesByUuid[claim.ownerUuid] = mutableListOf()
-        ter!!
-        // I love the idea that this is just me yelling "ter" at the computer for absolutely no reason
-        territoriesByUuid[claim.ownerUuid]!!.add(ter)
-        territoriesByXZ[claim.location.x.toString() + "," + claim.location.z.toString()] = ter
     }
 
     fun addClaim(claim: Claim): ClaimError {
         if (getClaimAt(claim.location) != null)
             return ClaimError.FAILED_TO_CLAIM
-        if (claim.ownerUuid !in claimsByUuid)
-            claimsByUuid[claim.ownerUuid] = mutableListOf()
         claims.add(claim)
-        claimsByUuid[claim.ownerUuid]!!.add(claim)
-        claimsByXZ[claim.location.x.toString() + "," + claim.location.z.toString()] = claim
         tryConnect(claim)
         return ClaimError.SUCCESS
     }
@@ -68,21 +59,17 @@ object ClaimHandler {
         if (claim !in claims)
             return ClaimError.FAILED_TO_UNCLAIM
         claims.remove(claim)
-        claimsByUuid[claim.ownerUuid]!!.remove(claim)
-        claimsByXZ.remove(claim.location.x.toString() + "," + claim.location.z.toString())
-        territoriesByXZ[claim.location.x.toString() + "," + claim.location.z.toString()]?.deleteClaim(claim)
+        getTerritoryAt(claim.location)?.deleteClaim(claim)
         return ClaimError.SUCCESS
     }
 
     fun numOfClaimsBy(uuid: UUID): Int {
-        if (uuid !in claimsByUuid)
-            return 0
-        return claimsByUuid[uuid]!!.size
+        var count = 0
+        for (claim in claims)
+            if (claim.ownerUuid == uuid)
+                count++
+        return count
     }
 
-    fun priceOfLandFor(uuid: UUID): Double {
-        if (uuid !in claimsByUuid)
-            return flatPrice
-        return flatPrice * perClaimPrice.pow(claimsByUuid[uuid]!!.size.toDouble())
-    }
+    fun priceOfLandFor(uuid: UUID) = flatPrice * perClaimPrice.pow(numOfClaimsBy(uuid))
 }
