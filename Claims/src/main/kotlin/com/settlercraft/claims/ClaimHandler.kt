@@ -2,9 +2,9 @@ package com.settlercraft.claims
 
 import org.bukkit.util.Vector
 import java.util.*
-import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.math.floor
 import kotlin.math.pow
-import kotlin.math.roundToInt
 
 object ClaimHandler {
     private val claims = mutableListOf<Claim>()
@@ -18,12 +18,19 @@ object ClaimHandler {
 
     fun getClaims() = claims
     fun getClaimAt(point: Vector): Claim? {
-        val x: Double = point.x.times(16).roundToInt().div(16.0)
-        val z: Double = point.z.times(16).roundToInt().div(16.0)
+        val x: Int = floor(point.x.div(16)).times(16) as Int
+        val z: Int = floor(point.z.div(16)).times(16) as Int
         return claimsByXZ["$x,$z"]
     }
+    fun getClaimAt(x: Double, z: Double) = getClaimAt(Vector(x, 0.0 , z))
+    fun getTerritoryAt(point: Vector): Territory? {
+        val x: Int = floor(point.x.div(16)).times(16) as Int
+        val z: Int = floor(point.z.div(16)).times(16) as Int
+        return territoriesByXZ["$x,$z"]
+    }
+    fun getTerritoryAt(x: Double, z: Double) = getTerritoryAt(Vector(x, 0.0 , z))
 
-    fun tryConnect(claim: Claim) {
+    private fun tryConnect(claim: Claim) {
         var found = false
         var ter: Territory? = null
         for (territory in territories)
@@ -35,6 +42,7 @@ object ClaimHandler {
         if (!found) {
             ter = Territory(claim.ownerUuid)
             ter.forceAddClaim(claim)
+            territories.add(ter)
         }
         if (claim.ownerUuid !in territoriesByUuid)
             territoriesByUuid[claim.ownerUuid] = mutableListOf()
@@ -61,6 +69,8 @@ object ClaimHandler {
             return ClaimError.FAILED_TO_UNCLAIM
         claims.remove(claim)
         claimsByUuid[claim.ownerUuid]!!.remove(claim)
+        claimsByXZ.remove(claim.location.x.toString() + "," + claim.location.z.toString())
+        territoriesByXZ[claim.location.x.toString() + "," + claim.location.z.toString()]?.deleteClaim(claim)
         return ClaimError.SUCCESS
     }
 
