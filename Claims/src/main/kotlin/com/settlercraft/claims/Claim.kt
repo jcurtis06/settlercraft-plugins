@@ -3,15 +3,15 @@ package com.settlercraft.claims
 import org.bukkit.util.Vector
 import java.util.UUID
 
-class Claim(var location: Vector, var owneruuid: UUID) {
+class Claim(var location: Vector, var ownerUuid: UUID) {
 
-    constructor(x: Int, y: Int, owneruuid: UUID) : this(Vector(x, y, 0), owneruuid)
+    constructor(x: Int, z: Int, ownerUuid: UUID) : this(Vector(x, 0, z), ownerUuid)
     fun isInClaim(point: Vector): Boolean {
         var x = point.x
-        var y = point.y
+        var z = point.z
         var inXBounds = (x >= location.x && x < location.x + 16)
-        var inYBounds = (y >= location.y && y < location.y + 16)
-        if (inXBounds && inYBounds)
+        var inZBounds = (z >= location.z && z < location.z + 16)
+        if (inXBounds && inZBounds)
             return true
         return false
     }
