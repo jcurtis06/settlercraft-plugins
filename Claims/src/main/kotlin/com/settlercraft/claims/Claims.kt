@@ -3,7 +3,6 @@ package com.settlercraft.claims
 import com.settlercraft.claims.claim.ClaimManager
 import com.settlercraft.claims.commands.ClaimCMD
 import com.settlercraft.claims.listeners.BlockListener
-import com.settlercraft.claims.listeners.JoinListener
 import com.settlercraft.claims.listeners.MovementListener
 import com.settlercraft.claims.ui.ClaimMain
 import org.bukkit.event.Listener
@@ -32,7 +31,6 @@ class Claims: JavaPlugin() {
 
         server.pluginManager.registerEvents(BlockListener(), this)
         server.pluginManager.registerEvents(MovementListener(), this)
-        server.pluginManager.registerEvents(JoinListener(), this)
 
         getCommand("claim")!!.setExecutor(ClaimCMD())
 

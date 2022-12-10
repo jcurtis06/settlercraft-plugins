@@ -10,8 +10,13 @@ import org.bukkit.OfflinePlayer
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
+import kotlin.math.pow
 
 object ClaimManager {
+    /*
+    - Wars can be started against online players
+    - When a war is started, the defender gets x amount of days to prepare
+     */
     private val claims = mutableListOf<ClaimedChunk>()
 
     private val playerClaims = mutableMapOf<UUID, MutableList<ClaimedChunk>>()
@@ -32,8 +37,8 @@ object ClaimManager {
         return Claims.instance!!.server.getOfflinePlayer(uuid)
     }
 
-    fun addClaim(claim: ClaimedChunk): ClaimError {
-        //if (isInClaim(claim.location)) return ClaimError.FAILED_TO_CLAIM
+    fun addClaim(claim: ClaimedChunk): ClaimStatus {
+        //if (isInClaim(claim.location)) return ClaimStatus.FAILED_TO_CLAIM
         claims.add(claim)
         claim.updatePersistentData()
         playerClaims.putIfAbsent(claim.owner, mutableListOf())
@@ -49,12 +54,12 @@ object ClaimManager {
         stmt.execute()
 
         println("Added claim lol")
-        return ClaimError.SUCCESS
+        return ClaimStatus.SUCCESS
     }
 
     fun loadClaims() {
         var count = 0
-        // get all chunks from database
+
         val con = Database.connect()
         val stmt = con.prepareStatement("SELECT * FROM chunks")
         val rs = stmt.executeQuery()
@@ -103,7 +108,6 @@ object ClaimManager {
         getTerritoryAt(claim.location)?.deleteClaim(claim)
         return ClaimError.SUCCESS
     }
-
     fun numOfClaimsBy(uuid: UUID): Int {
         var count = 0
         for (claim in claims)
@@ -111,7 +115,6 @@ object ClaimManager {
                 count++
         return count
     }
- */
-
-    // fun priceOfLandFor(uuid: UUID) = flatPrice * perClaimPrice.pow(numOfClaimsBy(uuid))
+*/
+    fun priceOfLandFor(uuid: UUID) = flatPrice * perClaimPrice.pow(Settlers.getSettler(uuid)!!.chunks)
 }

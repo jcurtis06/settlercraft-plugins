@@ -1,6 +1,6 @@
 package com.settlercraft.claims.claim
 
-enum class ClaimError {
+enum class ClaimStatus {
     SUCCESS,
     FAILED_TO_CLAIM,
     FAILED_TO_UNCLAIM,

@@ -13,10 +13,10 @@ class Territory(var ownerUuid: UUID) {
 
     private var timeSinceLastReclaim = timeBeforeRepo
 
-    fun tryConnect(claim: ClaimedChunk): ClaimError {
+    fun tryConnect(claim: ClaimedChunk): ClaimStatus {
         println("Trying to connect claim to territory")
         if (getAuthorityLevel(claim.owner) != AuthorityLevel.CO_OWNER)
-            return ClaimError.FAILED_TO_CONNECT
+            return ClaimStatus.FAILED_TO_CONNECT
         for (otherClaim in innerClaims) {
             if (
                     otherClaim.location.x - 16 == claim.location.x ||
@@ -26,10 +26,10 @@ class Territory(var ownerUuid: UUID) {
                 ) {
                 innerClaims.add(otherClaim)
                 println("Added inner claim ${otherClaim.location}")
-                return ClaimError.SUCCESS
+                return ClaimStatus.SUCCESS
             }
         }
-        return ClaimError.FAILED_TO_CONNECT
+        return ClaimStatus.FAILED_TO_CONNECT
     }
 
     fun isInTerritory(point: Location): Boolean {

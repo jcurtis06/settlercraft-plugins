@@ -2,7 +2,7 @@ package com.settlercraft.claims.ui
 
 import com.settlercraft.claims.Claims
 import com.settlercraft.claims.claim.ClaimedChunk
-import com.settlercraft.claims.claim.ClaimError
+import com.settlercraft.claims.claim.ClaimStatus
 import com.settlercraft.claims.claim.ClaimManager
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
@@ -56,10 +56,10 @@ class ClaimMain(): Listener {
                     val claim = ClaimedChunk(p.location, p.uniqueId)
 
                     when (ClaimManager.addClaim(claim)) {
-                        ClaimError.SUCCESS -> {
+                        ClaimStatus.SUCCESS -> {
                             p.sendMessage(Component.text("Claimed!"))
                         }
-                        ClaimError.FAILED_TO_CLAIM -> {
+                        ClaimStatus.FAILED_TO_CLAIM -> {
                             p.sendMessage(Component.text("Failed to claim!"))
                         }
                         else -> {
