@@ -1,17 +1,37 @@
 package com.settlercraft.claims
 
+import com.settlercraft.claims.listeners.BlockListener
+import com.settlercraft.claims.listeners.MovementListener
+import com.settlercraft.claims.ui.ClaimMain
+import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 
 class Claims: JavaPlugin() {
+    companion object {
+        var instance: Claims? = null
+    }
+
     override fun onEnable() {
-        // Pair is part of the Kotlin standard library
-        // this is a test to see if it works properly on the server
-        val testPair = Pair("Hello", "World")
+        instance = this
 
-        logger.info("KotlinPaper has been enabled!")
+        if (server.pluginManager.getPlugin("Settlercore") == null) {
+            logger.severe("SettlerCore not found! Disabling...")
+            server.pluginManager.disablePlugin(this)
+            return
+        }
 
-        // these lines test to make sure that the Kotlin standard library is working
-        logger.info("${testPair.first} From KotlinPaper")
-        logger.info("${testPair.second} From KotlinPaper")
+        logger.info("Enabled!")
+
+        for (player in server.onlinePlayers) {
+            player.sendMessage("Hello, ${player.name}!")
+            ClaimMain().open(player)
+        }
+
+        server.pluginManager.registerEvents(BlockListener(), this)
+        server.pluginManager.registerEvents(MovementListener(), this)
+    }
+
+    fun registerListener(listener: Listener) {
+        server.pluginManager.registerEvents(listener, this)
     }
 }

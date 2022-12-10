@@ -1,5 +1,6 @@
-package com.settlercraft.claims
+package com.settlercraft.claims.claim
 
+import com.settlercraft.claims.AuthorityLevel
 import org.bukkit.util.Vector
 import java.util.*
 import kotlin.collections.ArrayList
@@ -10,6 +11,7 @@ class Territory(var ownerUuid: UUID) {
     private val innerClaims = ArrayList<Claim>()
 
     private var timeSinceLastReclaim = timeBeforeRepo
+
     fun tryConnect(claim: Claim): ClaimError {
         if (getAuthorityLevel(claim.ownerUuid) != AuthorityLevel.CO_OWNER)
             return ClaimError.FAILED_TO_CONNECT

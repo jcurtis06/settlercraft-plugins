@@ -1,8 +1,7 @@
-package com.settlercraft.claims
+package com.settlercraft.claims.claim
 
 import org.bukkit.util.Vector
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.math.floor
 import kotlin.math.pow
 
@@ -13,15 +12,18 @@ object ClaimHandler {
     private const val perClaimPrice: Double = 1.5
 
     fun getClaims() = claims
+
     fun getClaimAt(point: Vector): Claim? {
-        val x: Int = floor(point.x.div(16)).times(16) as Int
-        val z: Int = floor(point.z.div(16)).times(16) as Int
+        val x: Int = floor(point.x.div(16)).times(16).toInt()
+        val z: Int = floor(point.z.div(16)).times(16).toInt()
         for (claim in claims)
             if (claim.isInClaim(point))
                 return claim
         return null
     }
+
     fun getClaimAt(x: Double, z: Double) = getClaimAt(Vector(x, 0.0 , z))
+
     fun getTerritoryAt(point: Vector): Territory? {
         val x: Int = floor(point.x.div(16)).times(16) as Int
         val z: Int = floor(point.z.div(16)).times(16) as Int
@@ -30,6 +32,7 @@ object ClaimHandler {
                 return territory
         return null
     }
+
     fun getTerritoryAt(x: Double, z: Double) = getTerritoryAt(Vector(x, 0.0 , z))
 
     private fun tryConnect(claim: Claim) {

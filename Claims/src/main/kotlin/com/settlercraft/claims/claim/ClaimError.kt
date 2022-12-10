@@ -1,4 +1,4 @@
-package com.settlercraft.claims
+package com.settlercraft.claims.claim
 
 enum class ClaimError {
     SUCCESS,
