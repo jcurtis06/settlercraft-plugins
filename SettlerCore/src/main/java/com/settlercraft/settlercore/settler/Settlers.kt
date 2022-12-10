@@ -45,10 +45,11 @@ object Settlers {
         while (rs.next()) {
             val uuid = rs.getString("uuid")
             val cash = rs.getDouble("cash")
+            val chunks = rs.getInt("chunks")
             val name = rs.getString("name")
             if (uuid != null) {
-                registerSettler(UUID.fromString(uuid), name, cash)
-                println("Loaded Settler $name with $$cash (${uuid})")
+                registerSettler(UUID.fromString(uuid), name, cash, chunks)
+                println("Loaded Settler $name with $$cash and $chunks chunks (${uuid})")
             }
         }
     }
@@ -101,8 +102,8 @@ object Settlers {
      * @param cash The cash of the settler
      * @see Settler
      */
-    private fun registerSettler(uuid: UUID, name: String, cash: Double = 0.0) {
+    private fun registerSettler(uuid: UUID, name: String, cash: Double = 0.0, chunks: Int = 0) {
         if (getSettler(uuid) != null) return
-        settlers.add(Settler(uuid, name, cash))
+        settlers.add(Settler(uuid, name, cash, chunks))
     }
 }

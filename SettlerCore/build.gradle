@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.settlercraft'
-version = '0.0.9-BETA'
+version = '1.0.1-RELEASE'
 
 repositories {
     mavenCentral()
@@ -43,7 +43,6 @@ publishing {
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
-    compileOnly "org.jetbrains.kotlin:kotlin-stdlib:1.7.22"
     shadow "org.jetbrains.kotlin:kotlin-stdlib:1.7.22"
 }
 

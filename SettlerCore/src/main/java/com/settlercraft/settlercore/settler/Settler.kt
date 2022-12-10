@@ -1,11 +1,12 @@
 package com.settlercraft.settlercore.settler
 
+import com.settlercraft.settlercore.data.Database
 import com.settlercraft.settlercore.settler.actionbar.StatusMessage
 import net.kyori.adventure.text.Component
 import java.util.UUID
 
 @Suppress("unused")
-data class Settler(val uuid: UUID, var name: String, var money: Double = 0.0) {
+data class Settler(val uuid: UUID, var name: String, var money: Double = 0.0, var chunks: Int = 0) {
     private var statusMsg = mutableListOf<StatusMessage>()
 
     /**

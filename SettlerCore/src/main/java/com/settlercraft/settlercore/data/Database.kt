@@ -87,7 +87,10 @@ object Database {
 
         try {
             val statement = connection.createStatement()
-            statement.executeUpdate("INSERT INTO $table ($col) VALUES ('$value')")
+            // example: INSERT INTO settlers (uuid, name, cash, chunks) VALUES ('123', 'test', 0, 0)
+            // col = uuid, name, cash, chunks
+            // value = '123', 'test', 0, 0
+            statement.executeUpdate("INSERT INTO $table ($col) VALUES ($value)")
         } catch (e: SQLException) {
             e.printStackTrace()
         }
