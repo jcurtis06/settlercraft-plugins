@@ -1,5 +1,6 @@
 package com.settlercraft.claims.claim
 
+import org.bukkit.Location
 import org.bukkit.util.Vector
 import java.util.*
 import kotlin.math.floor
@@ -13,7 +14,7 @@ object ClaimHandler {
 
     fun getClaims() = claims
 
-    fun getClaimAt(point: Vector): Claim? {
+    fun getClaimAt(point: Location): Claim? {
         val x: Int = floor(point.x.div(16)).times(16).toInt()
         val z: Int = floor(point.z.div(16)).times(16).toInt()
         for (claim in claims)
@@ -22,9 +23,7 @@ object ClaimHandler {
         return null
     }
 
-    fun getClaimAt(x: Double, z: Double) = getClaimAt(Vector(x, 0.0 , z))
-
-    fun getTerritoryAt(point: Vector): Territory? {
+    fun getTerritoryAt(point: Location): Territory? {
         val x: Int = floor(point.x.div(16)).times(16) as Int
         val z: Int = floor(point.z.div(16)).times(16) as Int
         for (territory in territories)
@@ -32,8 +31,6 @@ object ClaimHandler {
                 return territory
         return null
     }
-
-    fun getTerritoryAt(x: Double, z: Double) = getTerritoryAt(Vector(x, 0.0 , z))
 
     private fun tryConnect(claim: Claim) {
         var found = false

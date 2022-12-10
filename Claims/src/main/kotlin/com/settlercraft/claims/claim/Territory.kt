@@ -1,10 +1,11 @@
 package com.settlercraft.claims.claim
 
 import com.settlercraft.claims.AuthorityLevel
-import org.bukkit.util.Vector
+import org.bukkit.Location
 import java.util.*
 import kotlin.collections.ArrayList
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 class Territory(var ownerUuid: UUID) {
     private val uuidToAuthority = mapOf<UUID, AuthorityLevel>()
     private val timeBeforeRepo = 1000
@@ -29,12 +30,13 @@ class Territory(var ownerUuid: UUID) {
         return ClaimError.FAILED_TO_CONNECT
     }
 
-    fun isInTerritory(point: Vector): Boolean {
+    fun isInTerritory(point: Location): Boolean {
         for (claim in innerClaims)
             if (claim.isInClaim(point))
                 return true
         return false
     }
+
     fun getAuthorityLevel(uuid: UUID): AuthorityLevel {
         if (uuid !in uuidToAuthority)
             return AuthorityLevel.NO_CHANGE
@@ -44,8 +46,12 @@ class Territory(var ownerUuid: UUID) {
     }
 
     fun deleteClaim(claim: Claim) = innerClaims.remove(claim)
+
     fun forceAddClaim(claim: Claim) = innerClaims.add(claim)
 
     fun needsRepo() = (timeSinceLastReclaim > 0)
+
     fun tick() = --timeSinceLastReclaim
+
+    fun resetRepoClock() = timeBeforeRepo
 }
