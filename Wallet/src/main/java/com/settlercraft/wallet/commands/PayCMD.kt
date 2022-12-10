@@ -22,7 +22,7 @@ class PayCMD: CommandExecutor {
 
                 val amount: Int? = args[1].toIntOrNull()
 
-                if (amount == null) {
+                if (amount == null || amount <= 0) {
                     sender.sendMessage("${Wallet.prefix}§7${args[1]} §cis not a valid number!")
                     return false
                 }
