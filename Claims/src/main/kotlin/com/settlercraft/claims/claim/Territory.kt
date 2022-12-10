@@ -9,12 +9,13 @@ import kotlin.collections.ArrayList
 class Territory(var ownerUuid: UUID) {
     private val uuidToAuthority = mapOf<UUID, AuthorityLevel>()
     private val timeBeforeRepo = 1000
-    private val innerClaims = ArrayList<Claim>()
+    private val innerClaims = ArrayList<ClaimedChunk>()
 
     private var timeSinceLastReclaim = timeBeforeRepo
 
-    fun tryConnect(claim: Claim): ClaimError {
-        if (getAuthorityLevel(claim.ownerUuid) != AuthorityLevel.CO_OWNER)
+    fun tryConnect(claim: ClaimedChunk): ClaimError {
+        println("Trying to connect claim to territory")
+        if (getAuthorityLevel(claim.owner) != AuthorityLevel.CO_OWNER)
             return ClaimError.FAILED_TO_CONNECT
         for (otherClaim in innerClaims) {
             if (
@@ -24,6 +25,7 @@ class Territory(var ownerUuid: UUID) {
                     otherClaim.location.z + 16 == claim.location.z
                 ) {
                 innerClaims.add(otherClaim)
+                println("Added inner claim ${otherClaim.location}")
                 return ClaimError.SUCCESS
             }
         }
@@ -32,7 +34,7 @@ class Territory(var ownerUuid: UUID) {
 
     fun isInTerritory(point: Location): Boolean {
         for (claim in innerClaims)
-            if (claim.isInClaim(point))
+            if (ClaimManager.isInClaim(point))
                 return true
         return false
     }
@@ -45,9 +47,9 @@ class Territory(var ownerUuid: UUID) {
         return uuidToAuthority[uuid]!!
     }
 
-    fun deleteClaim(claim: Claim) = innerClaims.remove(claim)
+    fun deleteClaim(claim: ClaimedChunk) = innerClaims.remove(claim)
 
-    fun forceAddClaim(claim: Claim) = innerClaims.add(claim)
+    fun forceAddClaim(claim: ClaimedChunk) = innerClaims.add(claim)
 
     fun needsRepo() = (timeSinceLastReclaim > 0)
 

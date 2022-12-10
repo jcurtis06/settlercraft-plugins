@@ -1,9 +1,9 @@
 package com.settlercraft.claims.ui
 
 import com.settlercraft.claims.Claims
-import com.settlercraft.claims.claim.Claim
+import com.settlercraft.claims.claim.ClaimedChunk
 import com.settlercraft.claims.claim.ClaimError
-import com.settlercraft.claims.claim.ClaimHandler
+import com.settlercraft.claims.claim.ClaimManager
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -53,9 +53,9 @@ class ClaimMain(): Listener {
 
             when (event.slot) {
                 12 -> {
-                    val claim = Claim(p.location.x.toInt(), p.location.z.toInt(), p.uniqueId)
+                    val claim = ClaimedChunk(p.location, p.uniqueId)
 
-                    when (ClaimHandler.addClaim(claim)) {
+                    when (ClaimManager.addClaim(claim)) {
                         ClaimError.SUCCESS -> {
                             p.sendMessage(Component.text("Claimed!"))
                         }

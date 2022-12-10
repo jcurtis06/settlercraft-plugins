@@ -27,7 +27,7 @@ repositories {
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
-    compileOnly 'com.settlercraft:settler-core:0.0.9-BETA'
+    compileOnly 'com.settlercraft:settler-core:1.0.1-RELEASE'
 }
 
 def targetJavaVersion = 17

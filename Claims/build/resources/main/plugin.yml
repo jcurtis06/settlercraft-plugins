@@ -4,3 +4,6 @@ name: Claims
 api-version: 1.19
 depend:
   - Settlercore
+commands:
+  claim:
+    description: Claim a chunk
