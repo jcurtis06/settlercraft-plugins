@@ -3,10 +3,9 @@ package com.settlercraft.claims.claim
 import com.settlercraft.claims.Claims
 import com.settlercraft.settlercore.data.Database
 import com.settlercraft.settlercore.settler.Settlers
-import org.bukkit.Chunk
-import org.bukkit.Location
-import org.bukkit.NamespacedKey
-import org.bukkit.OfflinePlayer
+import com.settlercraft.settlercore.settler.actionbar.StatusMessage
+import org.bukkit.*
+import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.*
@@ -17,7 +16,7 @@ object ClaimManager {
     - Wars can be started against online players
     - When a war is started, the defender gets x amount of days to prepare
      */
-    private val claims = mutableListOf<ClaimedChunk>()
+    val claims = mutableListOf<ClaimedChunk>()
 
     private val playerClaims = mutableMapOf<UUID, MutableList<ClaimedChunk>>()
 
@@ -38,14 +37,14 @@ object ClaimManager {
     }
 
     fun addClaim(claim: ClaimedChunk): ClaimStatus {
-        //if (isInClaim(claim.location)) return ClaimStatus.FAILED_TO_CLAIM
         claims.add(claim)
         claim.updatePersistentData()
         playerClaims.putIfAbsent(claim.owner, mutableListOf())
         playerClaims[claim.owner]!!.add(claim)
-        //tryConnect(claim)
         val settler = Settlers.getSettler(claim.owner)!!
+
         settler.chunks += 1
+        Database.setColWhere("settlers", "chunks", "uuid", claim.owner.toString(), settler.chunks)
 
         val con = Database.connect()
         val stmt = con.prepareStatement("INSERT INTO chunks (chunk_key, owner) VALUES (?, ?)")
@@ -53,7 +52,6 @@ object ClaimManager {
         stmt.setString(2, claim.owner.toString())
         stmt.execute()
 
-        println("Added claim lol")
         return ClaimStatus.SUCCESS
     }
 
@@ -74,6 +72,21 @@ object ClaimManager {
         }
 
         println("Loaded $count claims")
+    }
+
+    fun setStatusMsg(p: Player) {
+        val settler = Settlers.getSettler(p.uniqueId) ?: return
+        val msg = StatusMessage("claim-${p.uniqueId}") {
+            val player = Bukkit.getPlayer(settler.uuid)
+
+            if (isInClaim(player!!.location)) {
+                "§c${getClaimOwner(player.location.chunk).name}"
+            } else {
+                "§aWild"
+            }
+        }
+
+        settler.addStatusMsg(msg)
     }
 
 /*

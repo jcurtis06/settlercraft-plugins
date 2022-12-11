@@ -7,3 +7,5 @@ depend:
 commands:
   claim:
     description: Claim a chunk
+  delallcontainers:
+    description: DANGER! Deletes ALL containers in a the world!

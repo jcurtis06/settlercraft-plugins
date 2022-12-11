@@ -2,8 +2,10 @@ package com.settlercraft.claims
 
 import com.settlercraft.claims.claim.ClaimManager
 import com.settlercraft.claims.commands.ClaimCMD
+import com.settlercraft.claims.commands.DelAllContainersCMD
 import com.settlercraft.claims.listeners.BlockListener
-import com.settlercraft.claims.listeners.MovementListener
+import com.settlercraft.claims.listeners.DangerListener
+import com.settlercraft.claims.listeners.JoinListener
 import com.settlercraft.claims.ui.ClaimMain
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
@@ -24,17 +26,18 @@ class Claims: JavaPlugin() {
 
         logger.info("Enabled!")
 
-        for (player in server.onlinePlayers) {
-            player.sendMessage("Hello, ${player.name}!")
-            ClaimMain().open(player)
-        }
-
         server.pluginManager.registerEvents(BlockListener(), this)
-        server.pluginManager.registerEvents(MovementListener(), this)
+        server.pluginManager.registerEvents(JoinListener(), this)
+        server.pluginManager.registerEvents(DangerListener(), this)
 
         getCommand("claim")!!.setExecutor(ClaimCMD())
+        getCommand("delallcontainers")!!.setExecutor(DelAllContainersCMD())
 
         ClaimManager.loadClaims()
+
+        for (p in server.onlinePlayers) {
+            ClaimManager.setStatusMsg(p)
+        }
     }
 
     fun registerListener(listener: Listener) {

@@ -1,14 +1,12 @@
 package com.settlercraft.claims.listeners
 
 import com.settlercraft.claims.claim.ClaimManager
-import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.event.entity.EntityExplodeEvent
-import org.bukkit.event.player.PlayerCommandSendEvent
 import org.bukkit.event.player.PlayerInteractEvent
 
 class BlockListener: Listener {
@@ -42,7 +40,7 @@ class BlockListener: Listener {
     }
 
     @EventHandler
-    fun onInteract(e: PlayerInteractEvent) {
+    fun onBlockInteract(e: PlayerInteractEvent) {
         if (e.clickedBlock == null) return
         if (!e.clickedBlock!!.type.isInteractable) return
         if (ClaimManager.isInClaim(e.clickedBlock!!.location)) {
