@@ -81,21 +81,6 @@ object Database {
         }
     }
 
-    fun insert(table: String, col: String, value: Any) {
-        lastExecution = 0
-        connect()
-
-        try {
-            val statement = connection.createStatement()
-            // example: INSERT INTO settlers (uuid, name, cash, chunks) VALUES ('123', 'test', 0, 0)
-            // col = uuid, name, cash, chunks
-            // value = '123', 'test', 0, 0
-            statement.executeUpdate("INSERT INTO $table ($col) VALUES ($value)")
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        }
-    }
-
     fun doesExist(table: String, col: String, value: Any): Boolean {
         lastExecution = 0
         connect()

@@ -1,6 +1,5 @@
 package com.settlercraft.settlercore.settler
 
-import com.settlercraft.settlercore.data.Database
 import com.settlercraft.settlercore.settler.actionbar.StatusMessage
 import net.kyori.adventure.text.Component
 import java.util.UUID
@@ -37,10 +36,19 @@ data class Settler(val uuid: UUID, var name: String, var money: Double = 0.0, va
      * @see StatusMessage
      */
     fun formatStatusMsg(): Component {
-        var msg = Component.text("")
-        for (i in statusMsg) {
-            msg = msg.append(Component.text(i.get()))
+        // example output: "§cClaim: §aWilderness §c| §cBalance: §a$0.00"
+        return if (statusMsg.size == 1) {
+            Component.text(statusMsg[0].get())
+        } else {
+            // loop
+            var msg = ""
+            for (i in statusMsg.indices) {
+                msg += statusMsg[i].get()
+                if (i != statusMsg.size - 1) {
+                    msg += " §7| §r"
+                }
+            }
+            Component.text(msg)
         }
-        return msg
     }
 }

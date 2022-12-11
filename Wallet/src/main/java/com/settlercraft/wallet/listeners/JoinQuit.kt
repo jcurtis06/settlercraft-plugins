@@ -11,7 +11,7 @@ class JoinQuit: Listener {
     @EventHandler
     fun onJoin(e: PlayerJoinEvent) {
         Settlers.getSettler(e.player.uniqueId)?.let {
-            it.addStatusMsg(StatusMessage("money-${it.name}") { it.money.toInt().toString() })
+            it.addStatusMsg(StatusMessage("money-${it.name}") { "§a$${it.money.toInt()}" })
         }
     }
 

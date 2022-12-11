@@ -9,8 +9,10 @@ class ShopItem(val rawItem: ItemStack, val price: Int, val stock: Int = 0) {
         val item = rawItem.clone()
         val meta = item.itemMeta
 
-        meta.lore()?.add(Component.text("Price: $price"))
-        meta.lore()?.add(Component.text("Stock: $stock"))
+        meta.lore(listOf(
+            Component.text("Price: $price"),
+            Component.text("Stock: $stock")
+        ))
 
         item.itemMeta = meta
         return item
