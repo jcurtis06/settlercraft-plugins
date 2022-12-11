@@ -1,7 +1,18 @@
-# settlercraft-plugins
-Custom plugins for SettlerCraft; the most legendary survival server in existence.
+# SettlerCraft Plugins 🌲
+Custom made PaperMC plugins for the Settlercraft Minecraft server (previously Northcraft).
 
-# Problems/Solutions
-- Claimed chunks stay forever claimed despite being untouched by the owner
-  - Solution A: Taxes
-  - Solution B: Not moving through adjacent territory every given time period results in loss of claim
+## Dev Map
+What order features will be added in
+
+### Phase 1
+- Reimplement all features from Northcraft
+  - Claims, shops, and payments
+
+### Phase 2
+- Taxes w/ API endpoints for web
+
+### Phase 3
+- Wars & player shops
+
+### Phase 4
+- Tower defense
