@@ -14,4 +14,9 @@ class ClaimedChunk(var location: Location, var owner: UUID) {
         val container = location.chunk.persistentDataContainer
         container.set(ClaimManager.claimedKey, PersistentDataType.STRING, owner.toString())
     }
+
+    fun delPersistentData() {
+        val container = location.chunk.persistentDataContainer
+        container.remove(ClaimManager.claimedKey)
+    }
 }

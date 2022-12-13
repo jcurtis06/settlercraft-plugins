@@ -1,12 +1,9 @@
 package com.settlercraft.claims
 
 import com.settlercraft.claims.claim.ClaimManager
-import com.settlercraft.claims.commands.ClaimCMD
-import com.settlercraft.claims.commands.DelAllContainersCMD
+import com.settlercraft.claims.commands.*
 import com.settlercraft.claims.listeners.BlockListener
-import com.settlercraft.claims.listeners.DangerListener
 import com.settlercraft.claims.listeners.JoinListener
-import com.settlercraft.claims.ui.ClaimMain
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -16,6 +13,7 @@ class Claims: JavaPlugin() {
     }
 
     override fun onEnable() {
+        saveDefaultConfig()
         instance = this
 
         if (server.pluginManager.getPlugin("Settlercore") == null) {
@@ -28,10 +26,12 @@ class Claims: JavaPlugin() {
 
         server.pluginManager.registerEvents(BlockListener(), this)
         server.pluginManager.registerEvents(JoinListener(), this)
-        server.pluginManager.registerEvents(DangerListener(), this)
 
         getCommand("claim")!!.setExecutor(ClaimCMD())
         getCommand("delallcontainers")!!.setExecutor(DelAllContainersCMD())
+        getCommand("togglelock")!!.setExecutor(ToggleLockCMD())
+        getCommand("delclaim")!!.setExecutor(DelClaimCMD())
+        getCommand("convertlegacyclaims")!!.setExecutor(ConvertLegacyClaimsCMD())
 
         ClaimManager.loadClaims()
 

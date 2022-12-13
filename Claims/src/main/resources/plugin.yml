@@ -9,3 +9,12 @@ commands:
     description: Claim a chunk
   delallcontainers:
     description: DANGER! Deletes ALL containers in a the world!
+  togglelock:
+    description: Toggle the lock on a container
+    usage: /togglelock <lock_type>
+  delclaim:
+    description: Deletes the claim you're standing in
+    usage: /delclaim
+  convertlegacyclaims:
+    description: pls work!
+    usage: /convertlegacyclaims and hope for hte best!

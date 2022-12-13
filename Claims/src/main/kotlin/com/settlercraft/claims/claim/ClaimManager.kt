@@ -12,18 +12,39 @@ import java.util.*
 import kotlin.math.pow
 
 object ClaimManager {
-    /*
-    - Wars can be started against online players
-    - When a war is started, the defender gets x amount of days to prepare
-     */
     val claims = mutableListOf<ClaimedChunk>()
 
     private val playerClaims = mutableMapOf<UUID, MutableList<ClaimedChunk>>()
+    private val playerLocks = mutableMapOf<UUID, ClaimLock>()
 
-    // private val territories = mutableListOf<Territory>()
     private const val flatPrice: Double = 20.0
     private const val perClaimPrice: Double = 1.5
     val claimedKey = NamespacedKey(Claims.instance as JavaPlugin, "claimed-chunk")
+
+    fun getPlayerLock(uuid: UUID): ClaimLock {
+        return playerLocks.getOrPut(uuid) { ClaimLock() }
+    }
+
+    fun getChunkLock(chunk: Chunk, lock: Lock): Boolean {
+        return getPlayerLock(getClaimOwner(chunk).uniqueId).getLock(lock)
+    }
+
+    fun toggleLock(uuid: UUID, lock: Lock) {
+        val playerLock = getPlayerLock(uuid)
+        setLock(uuid, lock, !playerLock.getLock(lock))
+    }
+
+    fun setLock(uuid: UUID, lock: Lock, value: Boolean) {
+        val playerLock = getPlayerLock(uuid)
+        playerLock.locks[lock] = value
+
+        val con = Database.connect()
+        val stmt = con.prepareStatement("UPDATE chunks SET ${lock.name} = ? WHERE owner = ?")
+        stmt.setBoolean(1, value)
+        stmt.setString(2, uuid.toString())
+        stmt.executeUpdate()
+        stmt.close()
+    }
 
     fun isInClaim(point: Location): Boolean {
         val container = point.chunk.persistentDataContainer
@@ -36,20 +57,49 @@ object ClaimManager {
         return Claims.instance!!.server.getOfflinePlayer(uuid)
     }
 
+    fun getClaimedChunk(point: Location): ClaimedChunk? {
+        return claims.firstOrNull { it.location.chunk.chunkKey == point.chunk.chunkKey }
+    }
+
     fun addClaim(claim: ClaimedChunk): ClaimStatus {
         claims.add(claim)
         claim.updatePersistentData()
         playerClaims.putIfAbsent(claim.owner, mutableListOf())
         playerClaims[claim.owner]!!.add(claim)
-        val settler = Settlers.getSettler(claim.owner)!!
+        val settler = Settlers.getSettler(claim.owner)
 
-        settler.chunks += 1
+        if (settler == null) {
+            println("Settler ${claim.owner} is null")
+            return ClaimStatus.SUCCESS
+        }
+
+        settler.chunks++
         Database.setColWhere("settlers", "chunks", "uuid", claim.owner.toString(), settler.chunks)
 
         val con = Database.connect()
         val stmt = con.prepareStatement("INSERT INTO chunks (chunk_key, owner) VALUES (?, ?)")
         stmt.setString(1, claim.location.chunk.chunkKey.toString())
         stmt.setString(2, claim.owner.toString())
+        stmt.execute()
+
+        return ClaimStatus.SUCCESS
+    }
+
+    fun delClaim(claim: ClaimedChunk, uuid: UUID): ClaimStatus {
+        if (claim.owner != uuid)
+            return ClaimStatus.NOT_YOURS
+        claims.remove(claim)
+        claim.delPersistentData()
+        playerClaims[claim.owner]!!.remove(claim)
+
+        val settler = Settlers.getSettler(claim.owner)!!
+
+        settler.chunks--
+        Database.setColWhere("settlers", "chunks", "uuid", claim.owner.toString(), settler.chunks)
+
+        val con = Database.connect()
+        val stmt = con.prepareStatement("DELETE FROM chunks WHERE chunk_key = ?")
+        stmt.setString(1, claim.location.chunk.chunkKey.toString())
         stmt.execute()
 
         return ClaimStatus.SUCCESS
@@ -67,6 +117,17 @@ object ClaimManager {
             val owner = UUID.fromString(rs.getString("owner"))
             val chunk = Claims.instance!!.server.getWorld("world")!!.getChunkAt(chunkKey.toLong())
             val claim = ClaimedChunk(chunk, owner)
+            val interact = rs.getBoolean("INTERACT")
+            val build = rs.getBoolean("BUILD")
+            val pvp = rs.getBoolean("PVP")
+
+            val lock = ClaimLock()
+            lock.locks[Lock.INTERACT] = interact
+            lock.locks[Lock.BUILD] = build
+            lock.locks[Lock.PVP] = pvp
+
+            playerLocks[owner] = lock
+
             playerClaims.putIfAbsent(claim.owner, mutableListOf())
             playerClaims[claim.owner]!!.add(claim)
         }
@@ -89,45 +150,5 @@ object ClaimManager {
         settler.addStatusMsg(msg)
     }
 
-/*
-    fun getTerritoryAt(point: Location): Territory? {
-        val x: Int = floor(point.x.div(16)).times(16).toInt()
-        val z: Int = floor(point.z.div(16)).times(16).toInt()
-        for (territory in territories)
-            if (territory.isInTerritory(point))
-                return territory
-        return null
-    }
-
-    private fun tryConnect(claim: ClaimedChunk) {
-        var found = false
-        var ter: Territory?
-        for (territory in territories)
-            if (territory.tryConnect(claim) == ClaimError.SUCCESS) {
-                found = true
-                break
-            }
-        if (!found) {
-            ter = Territory(claim.owner)
-            ter.forceAddClaim(claim)
-            territories.add(ter)
-        }
-    }
-
-    fun deleteClaim(claim: ClaimedChunk): ClaimError {
-        if (claim !in claims)
-            return ClaimError.FAILED_TO_UNCLAIM
-        claims.remove(claim)
-        getTerritoryAt(claim.location)?.deleteClaim(claim)
-        return ClaimError.SUCCESS
-    }
-    fun numOfClaimsBy(uuid: UUID): Int {
-        var count = 0
-        for (claim in claims)
-            if (claim.owner == uuid)
-                count++
-        return count
-    }
-*/
     fun priceOfLandFor(uuid: UUID) = flatPrice * perClaimPrice.pow(Settlers.getSettler(uuid)!!.chunks)
 }

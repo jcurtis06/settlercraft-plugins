@@ -93,8 +93,9 @@ class ClaimMain : Listener {
                     p.closeInventory()
                 }
                 14 -> {
-                    // manage
-                    p.sendMessage("Manage...")
+                    val manageGui = ClaimLock()
+                    manageGui.open(p)
+
                 }
             }
         }
