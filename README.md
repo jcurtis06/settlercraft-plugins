@@ -6,7 +6,7 @@ What order features will be added in
 
 ### Phase 1
 - Reimplement all features from Northcraft
-  - Claims, shops, and payments
+  - ~~Claims,~~ shops, ~~and payments~~
 
 ### Phase 2
 - Taxes w/ API endpoints for web
