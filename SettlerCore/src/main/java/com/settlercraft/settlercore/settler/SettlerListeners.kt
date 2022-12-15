@@ -13,7 +13,7 @@ class SettlerListeners: Listener {
         val player: Player = e.player
         if (Settlers.getSettler(e.player.uniqueId) == null) {
             if (Database.doesExist("settlers", "name", player.name)) {
-                Database.setColWhere("settlers", "uuid", "name", player.name, player.uniqueId)
+                Database.setColWhere("settlers", "uuid", "name", player.name, player.uniqueId.toString())
                 Settlers.loadSettlers()
             } else {
                 player.kick(Component.text("Please register at the SettlerCraft Website! If you have already registered, please contact an administrator"))

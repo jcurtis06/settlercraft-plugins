@@ -59,6 +59,7 @@ object Economy {
      */
     fun withdraw(uuid: UUID, amount: Double): EconomyError {
         if (getBalance(uuid).first == null) return EconomyError.SETTLER_NOT_FOUND
+        if (getBalance(uuid).first!! < amount) return EconomyError.INSUFFICIENT_FUNDS
         setBalance(uuid, getBalance(uuid).first!! - amount)
         return EconomyError.SUCCESS
     }

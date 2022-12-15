@@ -3,3 +3,8 @@ version: 1.0
 name: Shops
 api-version: 1.19
 prefix: Shops
+depend:
+  - Settlercore
+commands:
+  shop:
+    description: Manage & open shops

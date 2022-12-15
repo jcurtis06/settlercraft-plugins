@@ -2,6 +2,7 @@ package com.settlercraft.settlercore.settler
 
 import com.settlercraft.settlercore.SettlerCore
 import com.settlercraft.settlercore.data.Database
+import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitRunnable
 import java.util.*
 
@@ -37,6 +38,7 @@ object Settlers {
      * @see Database
      */
     fun loadSettlers() {
+        Bukkit.getLogger().info("Loading Settlers...")
         Database.connect()
         val con = Database.connection
 

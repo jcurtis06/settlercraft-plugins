@@ -21,15 +21,28 @@ class ConvertLegacyClaimsCMD: CommandExecutor {
             println("Found ${chunkKeys.size} chunks to convert")
 
             for (c in chunkKeys) {
-                println("Converting chunk $c")
                 val parent = config.getString("regions.$c.parent")
 
                 if (parent != null) {
                     val uuid = Database.getColWhere("USER_DATA", "MINECRAFT_ID", "PARENT_REGION_ID", parent) as String
 
+                    if (Database.getColWhere("chunks", "chunk_key", "chunk_key", c) != null) {
+                        continue
+                    }
+
+
                     println("Found Chunk: $c | Owner: $uuid")
 
-                    val claim = ClaimedChunk(Bukkit.getWorld("world")!!.getChunkAt(c.toLong()), UUID.fromString(uuid))
+                    val key: Long
+
+                    try {
+                        key = c.toLong()
+                    } catch (e: NumberFormatException) {
+                        sender.sendMessage("Invalid chunk key: $c")
+                        continue
+                    }
+
+                    val claim = ClaimedChunk(Bukkit.getWorld("world")!!.getChunkAt(key), UUID.fromString(uuid))
                     ClaimManager.addClaim(claim)
                 }
             }

@@ -18,7 +18,7 @@ import org.bukkit.inventory.Inventory
 class ClaimMain : Listener {
     private val inv: Inventory = Bukkit.createInventory(null, 27, Component.text("Claim Menu"))
 
-    private var price: Double = 20.0
+    private var price: Int = 20
 
     init {
         Claims.instance!!.registerListener(this)
@@ -86,7 +86,7 @@ class ClaimMain : Listener {
                         return
                     }
 
-                    Economy.withdraw(p.uniqueId, price)
+                    Economy.withdraw(p.uniqueId, price.toDouble())
                     val claim = ClaimedChunk(p.location, p.uniqueId)
                     ClaimManager.addClaim(claim)
                     p.playSound(p.location, Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f)

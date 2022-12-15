@@ -130,9 +130,10 @@ object ClaimManager {
 
             playerClaims.putIfAbsent(claim.owner, mutableListOf())
             playerClaims[claim.owner]!!.add(claim)
+            claims.add(claim)
         }
 
-        println("Loaded $count claims")
+        println("Loaded ${claims.size} claims")
     }
 
     fun setStatusMsg(p: Player) {
@@ -150,5 +151,15 @@ object ClaimManager {
         settler.addStatusMsg(msg)
     }
 
-    fun priceOfLandFor(uuid: UUID) = flatPrice * perClaimPrice.pow(Settlers.getSettler(uuid)!!.chunks)
+    fun priceOfLandFor(uuid: UUID) = onLogNFunction(Settlers.getSettler(uuid)!!.chunks) * 20
+
+    private fun onLogNFunction(n: Int): Int {
+        var result = 0
+        var n = n
+        while (n > 0) {
+            result += n
+            n = n shr 1
+        }
+        return result
+    }
 }
