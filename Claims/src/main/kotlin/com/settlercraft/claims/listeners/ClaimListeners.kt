@@ -6,6 +6,7 @@ import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
+import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockBurnEvent
 import org.bukkit.event.block.BlockFromToEvent
@@ -57,11 +58,12 @@ class ClaimListeners: Listener {
     @EventHandler
     fun onBlockInteract(e: PlayerInteractEvent) {
         if (e.clickedBlock == null) return
-        if (!e.clickedBlock!!.type.isInteractable) return
-        if (ClaimManager.isInClaim(e.clickedBlock!!.location)) {
-            if (ClaimManager.getChunkLock(e.clickedBlock!!.chunk, Lock.INTERACT)) {
-                e.isCancelled = true
-                e.player.sendMessage("§cYou cannot interact with that in ${ClaimManager.getClaimOwner(e.clickedBlock!!.chunk).name}'s territory!")
+        if (e.clickedBlock!!.type.isInteractable || e.action == Action.PHYSICAL) {
+            if (ClaimManager.isInClaim(e.clickedBlock!!.location)) {
+                if (ClaimManager.getChunkLock(e.clickedBlock!!.chunk, Lock.INTERACT)) {
+                    e.isCancelled = true
+                    e.player.sendMessage("§cYou cannot interact with that in ${ClaimManager.getClaimOwner(e.clickedBlock!!.chunk).name}'s territory!")
+                }
             }
         }
     }
