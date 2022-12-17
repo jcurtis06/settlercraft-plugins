@@ -25,6 +25,7 @@ object API {
 
                 Settlers.reloadSettler(player)
 
+                exchange.sendResponseHeaders(200, 0)
                 return@createEndpoint "Success"
             } else {
                 exchange.sendResponseHeaders(401, 0)
