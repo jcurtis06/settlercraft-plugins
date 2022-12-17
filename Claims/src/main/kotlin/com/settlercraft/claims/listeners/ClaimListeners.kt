@@ -3,6 +3,7 @@ package com.settlercraft.claims.listeners
 import com.settlercraft.claims.claim.ClaimManager
 import com.settlercraft.claims.claim.Lock
 import org.bukkit.block.Block
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
@@ -10,11 +11,12 @@ import org.bukkit.event.block.BlockBurnEvent
 import org.bukkit.event.block.BlockFromToEvent
 import org.bukkit.event.block.BlockIgniteEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityExplodeEvent
 import org.bukkit.event.player.PlayerBucketEmptyEvent
 import org.bukkit.event.player.PlayerInteractEvent
 
-class BlockListener: Listener {
+class ClaimListeners: Listener {
     @EventHandler
     fun onBlockBreak(e: BlockBreakEvent) {
         if (ClaimManager.isInClaim(e.block.location)) {
@@ -59,7 +61,7 @@ class BlockListener: Listener {
         if (ClaimManager.isInClaim(e.clickedBlock!!.location)) {
             if (ClaimManager.getChunkLock(e.clickedBlock!!.chunk, Lock.INTERACT)) {
                 e.isCancelled = true
-                e.player.sendMessage("§cYou interact with that in ${ClaimManager.getClaimOwner(e.clickedBlock!!.chunk).name}'s territory!")
+                e.player.sendMessage("§cYou cannot interact with that in ${ClaimManager.getClaimOwner(e.clickedBlock!!.chunk).name}'s territory!")
             }
         }
     }
@@ -102,6 +104,17 @@ class BlockListener: Listener {
         if (ClaimManager.isInClaim(e.block.location)) {
             if (ClaimManager.getChunkLock(e.block.chunk, Lock.BUILD))
                 e.isCancelled = true
+        }
+    }
+
+    @EventHandler
+    fun onEntDmg(e: EntityDamageByEntityEvent) {
+        if (e.damager !is Player) return
+        if (ClaimManager.isInClaim(e.entity.location)) {
+            if (ClaimManager.getChunkLock(e.entity.location.chunk, Lock.PVP)) {
+                e.isCancelled = true
+                e.damager.sendMessage("§cYou cannot damage entities in ${ClaimManager.getClaimOwner(e.entity.location.chunk).name}'s territory!")
+            }
         }
     }
 }

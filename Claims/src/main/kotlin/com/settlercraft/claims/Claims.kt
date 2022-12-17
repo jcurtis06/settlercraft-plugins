@@ -2,7 +2,7 @@ package com.settlercraft.claims
 
 import com.settlercraft.claims.claim.ClaimManager
 import com.settlercraft.claims.commands.*
-import com.settlercraft.claims.listeners.BlockListener
+import com.settlercraft.claims.listeners.ClaimListeners
 import com.settlercraft.claims.listeners.JoinListener
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
@@ -24,7 +24,7 @@ class Claims: JavaPlugin() {
 
         logger.info("Enabled!")
 
-        server.pluginManager.registerEvents(BlockListener(), this)
+        server.pluginManager.registerEvents(ClaimListeners(), this)
         server.pluginManager.registerEvents(JoinListener(), this)
 
         getCommand("claim")!!.setExecutor(ClaimCMD())
