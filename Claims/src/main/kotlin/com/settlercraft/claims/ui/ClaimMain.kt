@@ -63,12 +63,6 @@ class ClaimMain : Listener {
             "§7Manage §9all §7your chunks"
         ))
 
-        for (i in inv.contents) {
-            if (i == null) {
-                inv.setItem(inv.firstEmpty(), GuiUtils.createGuiItem(Material.GRAY_STAINED_GLASS_PANE, " "))
-            }
-        }
-
         player.openInventory(inv)
     }
 

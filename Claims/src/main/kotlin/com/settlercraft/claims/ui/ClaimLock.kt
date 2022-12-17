@@ -12,7 +12,7 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 
 class ClaimLock: Listener {
-    val inv = Bukkit.createInventory(null, 27, Component.text("§a§lClaim Management"))
+    val inv = Bukkit.createInventory(null, 27, Component.text("Claim Management"))
 
     fun open(player: Player) {
         Bukkit.getServer().pluginManager.registerEvents(this, Claims.instance!!)
@@ -44,21 +44,24 @@ class ClaimLock: Listener {
         } else {
             inv.setItem(13, GuiUtils.createGuiItem(
                 Material.GRAY_DYE,
-                "§aBuilding",
-                "§7Click to §alock §7interactions"
+                "§aInteractions",
+                "§7Click to §alock §7interactions",
             ))
         }
         if (ClaimManager.getPlayerLock(player.uniqueId).getLock(Lock.PVP)) {
             inv.setItem(14, GuiUtils.createGuiItem(
                 Material.LIME_DYE,
-                "§cPVP",
-                "§7Click to §cunlock §7PVP"
+                "§cPVE",
+                "§7Click to §cunlock §7PVE",
+                "§9Includes §lall §9entities"
             ))
         } else {
             inv.setItem(14, GuiUtils.createGuiItem(
                 Material.GRAY_DYE,
                 "§aPVP",
-                "§7Click to §alock §7PVP"
+                "§7Click to §alock §7PVP",
+                "",
+                "§9Includes §lall §9entities"
             ))
         }
     }
