@@ -41,18 +41,21 @@ object API {
         server!!.stop(0)
     }
 
-    fun createEndpoint(path: String, method: String, handler: (exchange: HttpExchange) -> String) {
+    private fun createEndpoint(path: String, method: String, handler: (exchange: HttpExchange) -> String) {
         server!!.createContext(path) { exchange ->
             println("Request: ${exchange.requestMethod} ${exchange.requestURI}")
             if (method == exchange.requestMethod) {
-                println("Handling request")
-                handler(exchange)
-                val output = exchange.responseBody
-                output.write("responseText".toByteArray())
-                output.flush()
+                val response = handler(exchange)
+                exchange.sendResponseHeaders(200, response.length.toLong())
+                val os = exchange.responseBody
+                os.write(response.toByteArray())
+                os.close()
             } else {
+                println("reached else")
                 exchange.sendResponseHeaders(405, -1) // 405 Method Not Allowed
             }
+            println("reached end of createEndpoint")
+            exchange.sendResponseHeaders(405, -1) // idek what this does lol
             exchange.close()
         }
     }

@@ -37,7 +37,7 @@ class ShopItem(val rawItem: ItemStack, val buy: Double, val sell: Double) {
 
         lore.add(Component.text("§7Sell: §9$$sell"))
         lore.add(Component.empty())
-        lore.add(Component.text("§9Click to sell"))
+        lore.add(Component.text("§9This item can be sold"))
 
         meta.lore(lore)
         item.itemMeta = meta

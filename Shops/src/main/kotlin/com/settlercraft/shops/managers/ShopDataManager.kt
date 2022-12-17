@@ -19,7 +19,6 @@ object ShopDataManager {
                 Bukkit.getLogger().severe("Could not create shops.yml!")
             }
         }
-
         config = YamlConfiguration.loadConfiguration(file)
     }
 

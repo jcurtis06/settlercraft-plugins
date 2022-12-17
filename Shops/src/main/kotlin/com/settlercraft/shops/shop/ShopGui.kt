@@ -17,8 +17,6 @@ import org.bukkit.scheduler.BukkitRunnable
 
 class ShopGui(val shop: Shop): Listener {
     private val inv = Bukkit.createInventory(null, 27, Component.text(shop.name))
-    private val bulkInv = Bukkit.createInventory(null, 27, Component.text("Bulk Sell"))
-    private var changedItems = mutableMapOf<Int, ItemStack>()
 
     init {
         Bukkit.getServer().pluginManager.registerEvents(this, Shops.instance!!)
@@ -33,68 +31,37 @@ class ShopGui(val shop: Shop): Listener {
             meta.displayName(Component.text("§9Bulk Sell"))
             meta.lore(listOf(Component.text("§7")))
             bulkItem.itemMeta = meta
-            bulkInv.addItem(bulkItem)
+
+            inv.setItem(22, bulkItem)
         }
 
         player.openInventory(inv)
-
-        for ((i, item: ItemStack?) in player.inventory.contents.withIndex()) {
-            if (item == null) continue
-            if (shop.items.any { it.rawItem.type == item.type }) {
-                val shopItem: ShopItem = shop.items.find { it.rawItem.type == item.type } as ShopItem
-                val displayItem = shopItem.getSellItem()
-                displayItem.amount = item.amount
-
-                player.inventory.setItem(player.inventory.first(item), displayItem)
-                changedItems[i] = item
-            }
-        }
-        updateLater(player)
-    }
-
-    private fun updateLater(player: Player) {
-        object : BukkitRunnable() {
-            override fun run() {
-                player.updateInventory()
-            }
-        }.runTaskLater(Shops.instance!!, 1)
     }
 
     @EventHandler
     fun onClick(event: InventoryClickEvent) {
-        if (event.inventory == inv) {
+        if (event.inventory != inv) return
+        if (event.clickedInventory == inv) {
+            event.isCancelled = true
+
+            if (event.slot == 22) {
+                val bulkGui = BulkGui(shop, event.whoClicked as Player)
+                bulkGui.open()
+                return
+            }
+
+            val item = event.currentItem ?: return
+            val player = event.whoClicked as Player
+            val shopItem = shop.items.firstOrNull { shopItem -> shopItem.rawItem.type == item.type } ?: return
+            shop.purchaseItem(shopItem, player)
+        } else {
             event.isCancelled = true
 
             val item = event.currentItem ?: return
             val player = event.whoClicked as Player
             val shopItem = shop.items.firstOrNull { shopItem -> shopItem.rawItem.type == item.type } ?: return
 
-            if (event.clickedInventory == inv) {
-                shop.purchaseItem(shopItem, player)
-
-                for ((i, it: ItemStack?) in player.inventory.contents.withIndex()) {
-                    if (it == null) continue
-                    if (shopItem.rawItem.type == it.type) {
-                        println("Found item")
-
-                        changedItems[i] = ItemStack(it.type, changedItems[i]!!.amount+1)
-                    }
-                }
-            } else {
-                shop.sellItem(shopItem, player)
-                changedItems[event.slot] = ItemStack(item.type, changedItems[event.slot]!!.amount-1)
-            }
-        }
-    }
-
-    @EventHandler
-    fun onClose(event: InventoryCloseEvent) {
-        if (event.inventory == inv) {
-            val player: Player = event.player as Player
-
-            changedItems.forEach {
-                player.inventory.setItem(it.key, it.value)
-            }
+            shop.sellItem(shopItem, event.currentItem!!, player)
         }
     }
 }
