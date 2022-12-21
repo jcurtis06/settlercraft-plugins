@@ -8,7 +8,7 @@ import java.util.*
 
 @Suppress("MemberVisibilityCanBePrivate")
 object Settlers {
-    private val settlers: MutableList<Settler> = mutableListOf()
+    val settlers: MutableList<Settler> = mutableListOf()
     private val blankUUID = UUID.fromString("00000000-0000-0000-0000-000000000000")
 
     /**
