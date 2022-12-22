@@ -9,6 +9,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
@@ -64,7 +65,21 @@ class BulkGui(private val shop: Shop, private val player: Player): Listener {
 
     @EventHandler
     fun onDrag(event: InventoryDragEvent) {
-        updateSell()
+        if (event.inventory == inv) {
+            updateSell()
+        }
+    }
+
+    @EventHandler
+    fun onClose(event: InventoryCloseEvent) {
+        if (event.inventory != inv) return
+        inv.contents.forEachIndexed { index, item ->
+            if (index != 21 && index != 23) {
+                if (item != null) {
+                    player.inventory.addItem(item)
+                }
+            }
+        }
     }
 
     private fun updateSell() {
