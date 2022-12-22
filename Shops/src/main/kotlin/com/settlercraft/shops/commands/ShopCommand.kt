@@ -18,6 +18,11 @@ class ShopCommand: CommandExecutor {
                         ShopManager.createShop(args[1])
                         return true
                     }
+                    if (args.size == 1) {
+                        sender.sendMessage("Creating shop ${sender.name}")
+                        ShopManager.createPlayerShop(sender)
+                        return true
+                    }
                 }
                 "delete" -> {
                     if (args.size == 2) {

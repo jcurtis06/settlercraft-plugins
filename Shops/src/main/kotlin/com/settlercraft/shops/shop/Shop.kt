@@ -2,13 +2,17 @@ package com.settlercraft.shops.shop
 
 import com.settlercraft.settlercore.econ.Economy
 import com.settlercraft.settlercore.econ.EconomyError
+import com.settlercraft.shops.managers.ShopDataManager
+import com.settlercraft.shops.managers.ShopManager
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import java.util.UUID
 
-class Shop(val name: String) {
+class Shop(val name: String, val sellable: Boolean = true) {
     val items = mutableListOf<ShopItem>()
+    var owner: UUID? = null
 
     fun printItems() {
         items.forEach {
@@ -24,7 +28,10 @@ class Shop(val name: String) {
     fun purchaseItem(item: ShopItem, player: Player) {
         when (Economy.withdraw(player.uniqueId, item.buy)) {
             EconomyError.SUCCESS -> {
-                player.inventory.addItem(item.rawItem)
+                player.inventory.addItem(item.rawItem.asOne())
+                if (owner != null) {
+                    Economy.deposit(owner!!, item.buy)
+                }
                 player.playSound(player.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f)
             }
             EconomyError.INSUFFICIENT_FUNDS -> {
@@ -48,23 +55,36 @@ class Shop(val name: String) {
         }
     }
 
+    fun removeItem(item: ShopItem) {
+        val id = item.id
+        println("Removing item w/ id $id")
+        items.remove(item)
+        println("Removed item, new size: ${items.size}")
+        for (i in items) {
+            println("Item ${i.id} is ${i.rawItem.type.name}")
+        }
+
+        val section = ShopDataManager.config?.getConfigurationSection(name)
+        section?.set(id.toString(), null)
+        ShopDataManager.save()
+    }
+
+    fun updateItem(item: ShopItem) {
+        ShopDataManager.config?.set("${name}.${item.id}.item", item.rawItem)
+        ShopDataManager.save()
+    }
+
     fun getTotalSellPrice(inv: Inventory): Double {
         var total = 0.0
-        // Loop through all items in the inventory
         for (i in 0 until inv.size) {
-            // Get the item in the slot
             val item = inv.getItem(i) ?: continue
-            // If the item is null, continue to the next item
-            // Get the shop item from the item
             val shopItem = getShopItem(item) ?: continue
-            // If the shop item is null, continue to the next item
-            // Add the sell price of the item to the total
             total += shopItem.sell * item.amount
         }
         return total
     }
 
-    fun getShopItem(item: ItemStack): ShopItem? {
+    private fun getShopItem(item: ItemStack): ShopItem? {
         return items.find { it.rawItem.isSimilar(item) }
     }
 }
